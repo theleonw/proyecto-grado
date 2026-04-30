@@ -108,7 +108,8 @@ def _oauth_client():
     if not client_id or not client_secret:
         return oauth, None
 
-    if "google" not in getattr(oauth, "_clients", {}):
+    google = oauth.create_client("google")
+    if google is None:
         oauth.register(
             name="google",
             server_metadata_url="https://accounts.google.com/.well-known/openid-configuration",
@@ -116,8 +117,9 @@ def _oauth_client():
             client_secret=client_secret,
             client_kwargs={"scope": "openid email profile"},
         )
+        google = oauth.create_client("google")
 
-    return oauth, oauth.create_client("google")
+    return oauth, google
 
 
 @auth_bp.route("/login", methods=["GET", "POST"])
@@ -176,7 +178,7 @@ def google_login():
     if google is None:
         flash("Google OAuth no configurado. Define GOOGLE_CLIENT_ID y GOOGLE_CLIENT_SECRET.", "error")
         return redirect(url_for("auth.login"))
-    redirect_uri = url_for("auth.google_callback", _external=True)
+    redirect_uri = current_app.config.get("GOOGLE_REDIRECT_URI") or url_for("auth.google_callback", _external=True)
     return google.authorize_redirect(redirect_uri)
 
 
@@ -187,7 +189,11 @@ def google_callback():
         flash("Google OAuth no disponible.", "error")
         return redirect(url_for("auth.login"))
 
-    token = google.authorize_access_token()
+    try:
+        token = google.authorize_access_token()
+    except Exception:
+        flash("No se pudo completar autenticacion con Google. Revisa credenciales y redirect URI.", "error")
+        return redirect(url_for("auth.login"))
     userinfo = token.get("userinfo")
     if not userinfo:
         userinfo = google.userinfo()

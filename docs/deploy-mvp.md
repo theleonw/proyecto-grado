@@ -13,6 +13,8 @@ Configura en tu hosting:
 - `DATABASE_URL` (si no usas SQLite)
 - `STRIPE_SECRET_KEY` (test key: `sk_test_...`)
 - `STRIPE_PUBLISHABLE_KEY` (test key: `pk_test_...`)
+- `GOOGLE_CLIENT_ID` y `GOOGLE_CLIENT_SECRET` (o aliases `GOOGLE_OAUTH_CLIENT_ID` / `GOOGLE_OAUTH_CLIENT_SECRET`)
+- `GOOGLE_REDIRECT_URI` (opcional, recomendado en producción)
 
 ## 3. Deploy en Render (rapido)
 1. Sube repo a GitHub.

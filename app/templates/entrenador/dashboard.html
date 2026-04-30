@@ -1,4 +1,4 @@
-﻿{% extends "layout.html" %}
+{% extends "layout.html" %}
 
 {% block title %}Panel Entrenador | Forjadores{% endblock %}
 
@@ -7,6 +7,12 @@
   <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-2" data-aos="fade-up">
     <h1 class="fw-bold mb-0">Panel del Entrenador</h1>
     <a href="{{ url_for('entrenadores.entrenadores_dashboard') }}" class="btn btn-grama">Actualizar Panel</a>
+  </div>
+
+  <div class="row g-4 mb-4">
+    <div class="col-md-6 col-xl-3"><div class="glass-card p-3"><p class="mb-1 text-secondary">Evaluaciones hoy</p><h2>{{ evaluaciones_hoy }}</h2></div></div>
+    <div class="col-md-6 col-xl-3"><div class="glass-card p-3"><p class="mb-1 text-secondary">Total estudiantes</p><h2>{{ total_estudiantes }}</h2></div></div>
+    <div class="col-xl-6"><div class="glass-card p-3"><canvas id="teamTrendChart" height="90"></canvas></div></div>
   </div>
 
   <div class="card glass-card border-0 rounded-4" data-aos="fade-up" data-aos-delay="100">
@@ -36,4 +42,25 @@
     </div>
   </div>
 </section>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  new Chart(document.getElementById('teamTrendChart'), {
+    type: 'line',
+    data: {
+      labels: ['Sem 1', 'Sem 2', 'Sem 3', 'Sem 4', 'Sem 5', 'Sem 6'],
+      datasets: [{
+        label: 'Tendencia de equipo',
+        data: {{ tendencia_equipo | tojson }},
+        borderColor: '#56d364',
+        backgroundColor: 'rgba(86,211,100,0.2)',
+        fill: true,
+        tension: 0.35
+      }]
+    },
+    options: { plugins: { legend: { labels: { color: '#c9d1d9' } } } }
+  });
+</script>
 {% endblock %}

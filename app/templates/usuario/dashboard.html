@@ -1,3 +1,88 @@
-﻿{% extends "portal_base.html" %}
+{% extends "layout.html" %}
 
 {% block title %}Portal Usuario | Forjadores{% endblock %}
+
+{% block content %}
+<section class="container py-4">
+  <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4" data-aos="fade-up">
+    <h1 class="fw-bold mb-0">Mi rendimiento</h1>
+    <span class="badge {{ 'text-bg-success' if estado_plan == 'ACTIVO' else 'text-bg-danger' }} fs-6">Plan {{ estado_plan }}</span>
+  </div>
+
+  <div class="row g-4 mb-4">
+    <div class="col-lg-8" data-aos="fade-right">
+      <div class="glass-card p-4 h-100">
+        <h2 class="h5 fw-bold">Progreso mensual</h2>
+        <canvas id="progresoChart" height="120"></canvas>
+      </div>
+    </div>
+    <div class="col-lg-4" data-aos="fade-left">
+      <div class="glass-card p-4 h-100">
+        <h2 class="h5 fw-bold">Proximo entrenamiento</h2>
+        <p class="mb-2"><strong>Fecha:</strong> {{ proximo_entrenamiento.fecha }}</p>
+        <p class="mb-2"><strong>Hora:</strong> {{ proximo_entrenamiento.hora }}</p>
+        <p class="mb-0"><strong>Sede:</strong> {{ proximo_entrenamiento.sede }}</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-lg-6" data-aos="zoom-in">
+      <div class="glass-card p-4 h-100">
+        <h2 class="h5 fw-bold">Radar de habilidades</h2>
+        <canvas id="skillsChart" height="180"></canvas>
+      </div>
+    </div>
+    <div class="col-lg-6" data-aos="zoom-in" data-aos-delay="120">
+      <div class="glass-card p-4 h-100">
+        <h2 class="h5 fw-bold">Tips de mejora con IA</h2>
+        <ul class="mb-0 text-secondary ps-3">
+          {% for tip in tips_ia %}
+          <li class="mb-2">{{ tip }}</li>
+          {% else %}
+          <li>Sin recomendaciones por ahora. Sigue entrenando.</li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  const progreso = {{ progreso | tojson }};
+  const atributos = {{ atributos | tojson }};
+
+  new Chart(document.getElementById('progresoChart'), {
+    type: 'line',
+    data: {
+      labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun'],
+      datasets: [{
+        label: 'Indice de rendimiento',
+        data: progreso,
+        borderColor: '#56d364',
+        backgroundColor: 'rgba(86,211,100,0.2)',
+        tension: 0.4,
+        fill: true
+      }]
+    },
+    options: { plugins: { legend: { labels: { color: '#c9d1d9' } } } }
+  });
+
+  new Chart(document.getElementById('skillsChart'), {
+    type: 'radar',
+    data: {
+      labels: Object.keys(atributos),
+      datasets: [{
+        label: 'Perfil actual',
+        data: Object.values(atributos),
+        backgroundColor: 'rgba(31,111,235,0.2)',
+        borderColor: '#1f6feb'
+      }]
+    },
+    options: { scales: { r: { suggestedMin: 40, suggestedMax: 100, pointLabels: { color: '#c9d1d9' }, grid: { color: '#30363d' }, angleLines: { color: '#30363d' }, ticks: { color: '#c9d1d9' } } } }
+  });
+</script>
+{% endblock %}

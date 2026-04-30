@@ -43,6 +43,7 @@ def entrenadores_dashboard():
     return render_template(
         "entrenador/dashboard.html",
         ranking=ranking_view,
+        tendencia_equipo=[68, 70, 72, 75, 79, 81],
         evaluaciones_hoy=evaluaciones_hoy,
         total_estudiantes=len(estudiantes),
     )

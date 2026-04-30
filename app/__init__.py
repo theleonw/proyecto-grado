@@ -8,6 +8,11 @@ from werkzeug.security import generate_password_hash
 from app.extensions import db
 
 
+def _es_rol_con_plan_activo(email: str) -> bool:
+    email_norm = (email or "").strip().lower()
+    return email_norm == "admin@forjadores.com" or "entrenador" in email_norm or email_norm.startswith("coach")
+
+
 def _load_dotenv(project_root: str) -> None:
     env_path = os.path.join(project_root, ".env")
     if not os.path.exists(env_path):
@@ -50,8 +55,8 @@ def _bootstrap_data() -> None:
                     apellidos=apellidos,
                     email=email_norm,
                     password_hash=generate_password_hash(password),
-                    activo=True,
-                    status="activo",
+                    activo=_es_rol_con_plan_activo(email_norm),
+                    status="activo" if _es_rol_con_plan_activo(email_norm) else "pendiente_pago",
                 )
             )
 
@@ -75,6 +80,8 @@ def create_app(config_object: str | None = None) -> Flask:
         GOOGLE_CLIENT_SECRET=os.getenv("GOOGLE_CLIENT_SECRET", ""),
         RECAPTCHA_SITE_KEY=os.getenv("RECAPTCHA_SITE_KEY", ""),
         RECAPTCHA_SECRET_KEY=os.getenv("RECAPTCHA_SECRET_KEY", ""),
+        STRIPE_SECRET_KEY=os.getenv("STRIPE_SECRET_KEY", ""),
+        STRIPE_PUBLISHABLE_KEY=os.getenv("STRIPE_PUBLISHABLE_KEY", ""),
     )
 
     if config_object:

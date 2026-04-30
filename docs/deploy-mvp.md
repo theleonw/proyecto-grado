@@ -40,6 +40,7 @@ Configura en tu hosting:
 - Admin: `admin@forjadores.com` / `Admin123*`
 - Entrenador: `entrenador@forjadores.com` / `Coach123*`
 - Usuario: `usuario@forjadores.com` / `User123*`
+- Usuario NO pago: `demo.nopago@forjadores.com` / `NoPago123*`
 - Usuario Google test: `google.test@forjadores.com` / `Google123*`
 
 Puedes cambiar estos valores con variables `DEFAULT_*` en `.env`.

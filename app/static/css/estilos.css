@@ -108,6 +108,49 @@ body {
 .fade-in-up { animation: fadeUp .55s ease both; }
 @keyframes fadeUp { from { opacity:0; transform: translateY(12px);} to { opacity:1; transform: translateY(0);} }
 
+.payment-hero {
+  position: relative;
+  min-height: 80vh;
+  background: linear-gradient(160deg, #0d1117 0%, #111a24 45%, #0b1520 100%);
+}
+
+.payment-blur {
+  position: absolute;
+  width: 320px;
+  height: 320px;
+  border-radius: 50%;
+  filter: blur(55px);
+  opacity: 0.35;
+  animation: floatingOrb 7s ease-in-out infinite;
+}
+
+.payment-blur-a {
+  background: #2ea043;
+  top: 10%;
+  left: -40px;
+}
+
+.payment-blur-b {
+  background: #1f6feb;
+  right: -60px;
+  bottom: 8%;
+  animation-delay: 1.3s;
+}
+
+.payment-card {
+  transition: transform .35s ease, box-shadow .35s ease;
+}
+
+.payment-card:hover {
+  transform: translateY(-10px) scale(1.02);
+  box-shadow: 0 20px 50px rgba(46, 160, 67, 0.22);
+}
+
+@keyframes floatingOrb {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(14px, -18px); }
+}
+
 .table {
   color: var(--text-main);
 }

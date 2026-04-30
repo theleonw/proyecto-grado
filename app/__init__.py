@@ -8,6 +8,11 @@ from werkzeug.security import generate_password_hash
 from app.extensions import db
 
 
+def _es_rol_con_plan_activo(email: str) -> bool:
+    email_norm = (email or "").strip().lower()
+    return email_norm == "admin@forjadores.com" or "entrenador" in email_norm or email_norm.startswith("coach")
+
+
 def _load_dotenv(project_root: str) -> None:
     env_path = os.path.join(project_root, ".env")
     if not os.path.exists(env_path):
@@ -38,6 +43,18 @@ def _bootstrap_data() -> None:
         ("Admin", "Sistema", os.getenv("DEFAULT_ADMIN_EMAIL", "admin@forjadores.com"), os.getenv("DEFAULT_ADMIN_PASSWORD", "Admin123*")),
         ("Laura", "Entrenadora", "entrenador@forjadores.com", "Coach123*"),
         ("Carlos", "Jugador", "usuario@forjadores.com", "User123*"),
+        (
+            os.getenv("DEFAULT_GOOGLE_TEST_NAME", "Google"),
+            os.getenv("DEFAULT_GOOGLE_TEST_LASTNAME", "Tester"),
+            os.getenv("DEFAULT_GOOGLE_TEST_EMAIL", "google.test@forjadores.com"),
+            os.getenv("DEFAULT_GOOGLE_TEST_PASSWORD", "Google123*"),
+        ),
+        (
+            os.getenv("DEFAULT_NOPAGO_NAME", "Demo"),
+            os.getenv("DEFAULT_NOPAGO_LASTNAME", "NoPago"),
+            os.getenv("DEFAULT_NOPAGO_EMAIL", "demo.nopago@forjadores.com"),
+            os.getenv("DEFAULT_NOPAGO_PASSWORD", "NoPago123*"),
+        ),
     ]
 
     for nombres, apellidos, email, password in usuarios_demo:
@@ -50,8 +67,8 @@ def _bootstrap_data() -> None:
                     apellidos=apellidos,
                     email=email_norm,
                     password_hash=generate_password_hash(password),
-                    activo=True,
-                    status="activo",
+                    activo=_es_rol_con_plan_activo(email_norm),
+                    status="activo" if _es_rol_con_plan_activo(email_norm) else "pendiente_pago",
                 )
             )
 
@@ -71,10 +88,13 @@ def create_app(config_object: str | None = None) -> Flask:
         SECRET_KEY=os.getenv("SECRET_KEY", "forjadores-secret-key"),
         SQLALCHEMY_DATABASE_URI=os.getenv("DATABASE_URL", sqlite_url),
         SQLALCHEMY_TRACK_MODIFICATIONS=False,
-        GOOGLE_CLIENT_ID=os.getenv("GOOGLE_CLIENT_ID", ""),
-        GOOGLE_CLIENT_SECRET=os.getenv("GOOGLE_CLIENT_SECRET", ""),
+        GOOGLE_CLIENT_ID=os.getenv("GOOGLE_CLIENT_ID") or os.getenv("GOOGLE_OAUTH_CLIENT_ID", ""),
+        GOOGLE_CLIENT_SECRET=os.getenv("GOOGLE_CLIENT_SECRET") or os.getenv("GOOGLE_OAUTH_CLIENT_SECRET", ""),
+        GOOGLE_REDIRECT_URI=os.getenv("GOOGLE_REDIRECT_URI", ""),
         RECAPTCHA_SITE_KEY=os.getenv("RECAPTCHA_SITE_KEY", ""),
         RECAPTCHA_SECRET_KEY=os.getenv("RECAPTCHA_SECRET_KEY", ""),
+        STRIPE_SECRET_KEY=os.getenv("STRIPE_SECRET_KEY", ""),
+        STRIPE_PUBLISHABLE_KEY=os.getenv("STRIPE_PUBLISHABLE_KEY", ""),
     )
 
     if config_object:

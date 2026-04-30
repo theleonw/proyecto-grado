@@ -1,0 +1,64 @@
+﻿<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Control de Asistencia - Entrenador</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body { background: #eef2f7; }
+    .asistencia-card { border: 0; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,.08); }
+    .check-item { border-radius: 14px; background: #fff; border: 2px solid #e8edf4; }
+    .check-item .btn { min-height: 56px; font-size: 1.05rem; font-weight: 700; }
+    .nombre { font-size: 1.05rem; font-weight: 600; }
+    @media (min-width: 768px) {
+      .nombre { font-size: 1.15rem; }
+      .check-item .btn { min-height: 64px; font-size: 1.1rem; }
+    }
+  </style>
+</head>
+<body>
+  <main class="container py-4 py-md-5">
+    <section class="asistencia-card card p-3 p-md-4">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1 class="h3 mb-0">Checklist de Asistencia</h1>
+        <span class="badge text-bg-primary fs-6">Sesion de Hoy</span>
+      </div>
+
+      <form method="post" action="#" class="vstack gap-3">
+        <article class="check-item p-3">
+          <div class="d-flex flex-column flex-md-row gap-3 justify-content-between align-items-md-center">
+            <div class="nombre">Juan Perez - Sub 12</div>
+            <div class="d-grid d-md-flex gap-2 w-100 w-md-auto">
+              <button type="button" class="btn btn-success btn-lg px-4">Presente</button>
+              <button type="button" class="btn btn-outline-danger btn-lg px-4">Ausente</button>
+            </div>
+          </div>
+        </article>
+
+        <article class="check-item p-3">
+          <div class="d-flex flex-column flex-md-row gap-3 justify-content-between align-items-md-center">
+            <div class="nombre">Carlos Gomez - Sub 12</div>
+            <div class="d-grid d-md-flex gap-2 w-100 w-md-auto">
+              <button type="button" class="btn btn-success btn-lg px-4">Presente</button>
+              <button type="button" class="btn btn-outline-danger btn-lg px-4">Ausente</button>
+            </div>
+          </div>
+        </article>
+
+        <article class="check-item p-3">
+          <div class="d-flex flex-column flex-md-row gap-3 justify-content-between align-items-md-center">
+            <div class="nombre">Mateo Rios - Sub 14</div>
+            <div class="d-grid d-md-flex gap-2 w-100 w-md-auto">
+              <button type="button" class="btn btn-success btn-lg px-4">Presente</button>
+              <button type="button" class="btn btn-outline-danger btn-lg px-4">Ausente</button>
+            </div>
+          </div>
+        </article>
+
+        <button type="submit" class="btn btn-primary btn-lg mt-2">Guardar Asistencia</button>
+      </form>
+    </section>
+  </main>
+</body>
+</html>

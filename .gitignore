@@ -1,0 +1,6 @@
+﻿.venv/
+__pycache__/
+*.pyc
+instance/
+forjadores.db
+.env

@@ -1,0 +1,53 @@
+﻿{% extends "layout.html" %}
+
+{% block title %}Portal | Forjadores del Futuro{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-3 py-md-4">
+  <div class="row g-3 g-md-4">
+    <aside class="col-12 col-md-4 col-lg-3" data-aos="fade-up">
+      <div class="glass-card p-3 p-md-4 h-100">
+        <h2 class="h5 fw-bold">Portal Deportivo</h2>
+        <p class="text-secondary small mb-4">Accesos rapidos</p>
+        <div class="list-group portal-menu">
+          <a href="#" class="list-group-item list-group-item-action active">Resumen</a>
+          <a href="#" class="list-group-item list-group-item-action">Asistencias</a>
+          <a href="#" class="list-group-item list-group-item-action">Rendimiento</a>
+          <a href="#" class="list-group-item list-group-item-action">Pagos</a>
+        </div>
+      </div>
+    </aside>
+
+    <section class="col-12 col-md-8 col-lg-9" data-aos="fade-up" data-aos-delay="120">
+      {% if estado_plan == 'INACTIVO' %}
+      <div class="alert alert-danger border-3 border-danger fw-bold text-center py-4 fs-5 rounded-4 shadow-sm" role="alert">
+        TU PLAN ESTA INACTIVO - REALIZA TU PAGO PARA VER TU RENDIMIENTO
+      </div>
+      {% else %}
+      <div class="id-card-glow glass-card p-4 mb-4">
+        <p class="mb-1 text-secondary">ID DIGITAL</p>
+        <h3 class="fw-bold mb-1">{{ session.get('nombre', 'Jugador Forjadores') }}</h3>
+        <p class="mb-0">Estado de Pago: <span class="text-success fw-bold">ACTIVO</span></p>
+      </div>
+      <div class="row g-3 g-md-4">
+        <div class="col-12 col-lg-6">
+          <article class="glass-card p-4 h-100">
+            <h3 class="h5 fw-bold mb-3">Mi Ranking</h3>
+            <p class="text-secondary mb-3">Posicion calculada con algoritmo de burbuja.</p>
+            <div class="display-6 fw-bold text-success">#{{ ranking_posicion }}</div>
+          </article>
+        </div>
+        <div class="col-12 col-lg-6">
+          <article class="glass-card p-4 h-100">
+            <h3 class="h5 fw-bold mb-3">Proximo Entrenamiento</h3>
+            <p class="mb-1 fw-semibold">{{ proximo_entrenamiento.fecha }}</p>
+            <p class="mb-1 text-secondary">{{ proximo_entrenamiento.hora }}</p>
+            <p class="mb-0 text-secondary">{{ proximo_entrenamiento.sede }}</p>
+          </article>
+        </div>
+      </div>
+      {% endif %}
+    </section>
+  </div>
+</div>
+{% endblock %}

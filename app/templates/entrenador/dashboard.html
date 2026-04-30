@@ -1,0 +1,39 @@
+﻿{% extends "layout.html" %}
+
+{% block title %}Panel Entrenador | Forjadores{% endblock %}
+
+{% block content %}
+<section class="container py-4 fade-in-up">
+  <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-2" data-aos="fade-up">
+    <h1 class="fw-bold mb-0">Panel del Entrenador</h1>
+    <a href="{{ url_for('entrenadores.entrenadores_dashboard') }}" class="btn btn-grama">Actualizar Panel</a>
+  </div>
+
+  <div class="card glass-card border-0 rounded-4" data-aos="fade-up" data-aos-delay="100">
+    <div class="card-body">
+      <h3 class="h5 fw-bold mb-3">Jugadores y Acciones Rapidas</h3>
+      <div class="table-responsive">
+        <table class="table table-striped align-middle">
+          <thead><tr><th>#</th><th>Codigo</th><th>Jugador</th><th>Promedio</th><th>Acciones</th></tr></thead>
+          <tbody>
+            {% for item in ranking %}
+            <tr>
+              <td>{{ loop.index }}</td>
+              <td>{{ item.codigo }}</td>
+              <td>{{ item.nombre }}</td>
+              <td><span class="badge text-bg-primary">{{ item.promedio }}</span></td>
+              <td>
+                <button class="btn btn-sm btn-outline-success coach-btn">Asistencia</button>
+                <button class="btn btn-sm btn-outline-light coach-btn">Evaluar</button>
+              </td>
+            </tr>
+            {% else %}
+            <tr><td colspan="5" class="text-center text-secondary">No hay estudiantes registrados.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

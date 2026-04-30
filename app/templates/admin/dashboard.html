@@ -1,0 +1,78 @@
+﻿{% extends "layout.html" %}
+
+{% block title %}Panel Admin | Forjadores{% endblock %}
+
+{% block content %}
+<section class="container py-4 fade-in-up">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="fw-bold mb-0">Panel Administrativo</h1>
+    <span class="badge text-bg-success fs-6">Control Total</span>
+  </div>
+
+  <div class="row g-3 mb-4" data-aos="fade-up">
+    <div class="col-6 col-lg-3"><div class="glass-card p-3"><p>Usuarios</p><h2>{{ total_usuarios }}</h2></div></div>
+    <div class="col-6 col-lg-3"><div class="glass-card p-3"><p>Estudiantes</p><h2>{{ total_estudiantes }}</h2></div></div>
+    <div class="col-6 col-lg-3"><div class="glass-card p-3"><p>Categorias</p><h2>{{ total_categorias }}</h2></div></div>
+    <div class="col-6 col-lg-3"><div class="glass-card p-3"><p>Pagos Pendientes</p><h2>{{ pagos_pendientes }}</h2></div></div>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-12 col-xl-7" data-aos="fade-up">
+      <div class="glass-card p-3 p-md-4 h-100">
+        <h3 class="h5 fw-bold mb-3">Cuadro de Honor</h3>
+        <div class="table-responsive"><table class="table table-hover align-middle"><thead><tr><th>#</th><th>Codigo</th><th>Nombre</th><th>Promedio</th></tr></thead><tbody>
+          {% for item in cuadro_honor %}
+          <tr><td>{{ item.posicion }}</td><td>{{ item.codigo }}</td><td>{{ item.nombre }}</td><td><span class="badge text-bg-success">{{ item.promedio_rendimiento }}</span></td></tr>
+          {% else %}<tr><td colspan="4" class="text-center text-secondary">Sin evaluaciones registradas</td></tr>{% endfor %}
+        </tbody></table></div>
+      </div>
+    </div>
+
+    <div class="col-12 col-xl-5" data-aos="fade-up" data-aos-delay="120">
+      <div class="glass-card p-3 p-md-4 h-100">
+        <h3 class="h5 fw-bold mb-3">Analitica</h3>
+        <canvas id="statsChart" height="150"></canvas>
+        <hr class="border-secondary">
+        <canvas id="morososChart" height="120"></canvas>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  const data = {{ chart_data | tojson }};
+
+  new Chart(document.getElementById('statsChart'), {
+    type: 'bar',
+    data: {
+      labels: data.labels,
+      datasets: [{
+        label: 'Resumen General',
+        data: data.values,
+        backgroundColor: ['#238636', '#2ea043', '#56d364', '#161b22'],
+        borderRadius: 8
+      }]
+    },
+    options: {
+      animation: { duration: 1200, easing: 'easeOutQuart' },
+      plugins: { legend: { display: false } },
+      scales: { y: { beginAtZero: true } }
+    }
+  });
+
+  new Chart(document.getElementById('morososChart'), {
+    type: 'doughnut',
+    data: {
+      labels: ['Morosos', 'Al dia'],
+      datasets: [{ data: [data.morosos, Math.max(data.values[1] - data.morosos, 0)], backgroundColor: ['#f85149', '#238636'] }]
+    },
+    options: {
+      animation: { duration: 1000 },
+      plugins: { legend: { labels: { color: '#c9d1d9' } } }
+    }
+  });
+</script>
+{% endblock %}

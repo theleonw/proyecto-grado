@@ -43,6 +43,12 @@ def _bootstrap_data() -> None:
         ("Admin", "Sistema", os.getenv("DEFAULT_ADMIN_EMAIL", "admin@forjadores.com"), os.getenv("DEFAULT_ADMIN_PASSWORD", "Admin123*")),
         ("Laura", "Entrenadora", "entrenador@forjadores.com", "Coach123*"),
         ("Carlos", "Jugador", "usuario@forjadores.com", "User123*"),
+        (
+            os.getenv("DEFAULT_GOOGLE_TEST_NAME", "Google"),
+            os.getenv("DEFAULT_GOOGLE_TEST_LASTNAME", "Tester"),
+            os.getenv("DEFAULT_GOOGLE_TEST_EMAIL", "google.test@forjadores.com"),
+            os.getenv("DEFAULT_GOOGLE_TEST_PASSWORD", "Google123*"),
+        ),
     ]
 
     for nombres, apellidos, email, password in usuarios_demo:

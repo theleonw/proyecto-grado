@@ -172,6 +172,57 @@ def login():
     return _redirect_por_rol(rol)
 
 
+@auth_bp.route("/registro", methods=["GET", "POST"])
+def registro():
+    if request.method == "GET":
+        return render_template("auth/registro.html")
+
+    payload = request.get_json(silent=True) or request.form.to_dict()
+    nombres = (payload.get("nombres") or "").strip()
+    apellidos = (payload.get("apellidos") or "").strip()
+    email = (payload.get("email") or "").strip().lower()
+    password = payload.get("password") or ""
+
+    if not nombres or not apellidos or not email or not password:
+        flash("Completa todos los campos para registrarte.", "error")
+        return redirect(url_for("auth.registro"))
+
+    try:
+        existente = Usuario.query.filter_by(email=email).first()
+        if existente:
+            flash("Ese correo ya existe. Inicia sesion.", "error")
+            return redirect(url_for("auth.login"))
+
+        rol = _inferir_rol(email)
+        usuario = Usuario(
+            nombres=nombres,
+            apellidos=apellidos,
+            email=email,
+            password_hash=generate_password_hash(password),
+            activo=not _debe_tener_plan_inactivo(rol),
+            status="pendiente_pago" if _debe_tener_plan_inactivo(rol) else "activo",
+        )
+        from app.extensions import db
+
+        db.session.add(usuario)
+        db.session.commit()
+    except SQLAlchemyError:
+        flash("No fue posible crear la cuenta. Intenta de nuevo.", "error")
+        return redirect(url_for("auth.registro"))
+
+    session["user_id"] = usuario.id
+    session["email"] = usuario.email
+    session["nombre"] = f"{usuario.nombres} {usuario.apellidos}"
+    session["rol"] = _inferir_rol(usuario.email)
+
+    if _debe_tener_plan_inactivo(session["rol"]):
+        flash("Cuenta creada. Ahora activa tu plan para ingresar.", "success")
+        return redirect(url_for("portal.pago"))
+
+    flash("Cuenta creada correctamente.", "success")
+    return _redirect_por_rol(session["rol"])
+
+
 @auth_bp.get("/google")
 def google_login():
     _, google = _oauth_client()

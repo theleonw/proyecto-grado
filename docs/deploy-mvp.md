@@ -25,7 +25,8 @@ Configura en tu hosting:
 6. Si ya tenias un deploy previo, borra el Start Command viejo `gunicorn app:app` y redeploya.
 
 ## 4. Probar pago Stripe (modo test)
-- Inicia sesion con usuario normal.
+- Opcion A: Inicia sesion con usuario normal.
+- Opcion B: Registra un usuario nuevo en `/auth/registro` (se guarda en DB y redirige a pago).
 - Entra a `/portal/pago`.
 - Elige plan y paga.
 - Usa tarjeta de prueba Stripe: `4242 4242 4242 4242`, fecha futura, CVC cualquiera.

@@ -6,3 +6,4 @@ SQLAlchemy==2.0.49
 authlib==1.3.1
 python-dotenv==1.2.2
 requests==2.33.1
+stripe==12.0.0

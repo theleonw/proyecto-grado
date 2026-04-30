@@ -90,6 +90,10 @@ def admin_required(view_func):
     return wrapper
 
 
+def _debe_tener_plan_inactivo(rol: str) -> bool:
+    return rol not in {"ADMIN", "ENTRENADOR"}
+
+
 def _oauth_client():
     if OAuth is None:
         return None, None
@@ -149,11 +153,12 @@ def login():
         flash("Credenciales invalidas", "error")
         return redirect(url_for("auth.login"))
 
-    if not usuario.activo:
-        flash("Acceso restringido: plan pendiente de pago.", "error")
-        return redirect(url_for("auth.login", blocked=1))
-
     rol = _inferir_rol(usuario.email)
+
+    if _debe_tener_plan_inactivo(rol) and (not usuario.activo or usuario.status != "activo"):
+        flash("Tu plan esta inactivo. Completa el pago para entrar al portal.", "error")
+        return redirect(url_for("portal.pago"))
+
     session["user_id"] = usuario.id
     session["email"] = usuario.email
     session["nombre"] = f"{usuario.nombres} {usuario.apellidos}"
@@ -194,22 +199,25 @@ def google_callback():
 
     usuario = Usuario.query.filter_by(email=email).first()
     if not usuario:
+        rol_nuevo = _inferir_rol(email)
         usuario = Usuario(
             nombres=userinfo.get("given_name") or "Usuario",
             apellidos=userinfo.get("family_name") or "Google",
             email=email,
             password_hash=generate_password_hash(os.urandom(24).hex()),
-            activo=True,
-            status="pendiente_pago",
+            activo=not _debe_tener_plan_inactivo(rol_nuevo),
+            status="pendiente_pago" if _debe_tener_plan_inactivo(rol_nuevo) else "activo",
         )
         from app.extensions import db
         db.session.add(usuario)
         db.session.commit()
 
-    if not usuario.activo or usuario.status == "pendiente_pago":
-        return render_template("auth/login.html", show_blocked_modal=True)
-
     rol = _inferir_rol(usuario.email)
+
+    if _debe_tener_plan_inactivo(rol) and (not usuario.activo or usuario.status != "activo"):
+        flash("Tu plan esta inactivo. Completa el pago para entrar al portal.", "error")
+        return redirect(url_for("portal.pago"))
+
     session["user_id"] = usuario.id
     session["email"] = usuario.email
     session["nombre"] = f"{usuario.nombres} {usuario.apellidos}"

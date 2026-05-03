@@ -7,6 +7,15 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
+## 1.1 Si no sabes GitHub (paso a paso rapido)
+```bash
+git add .
+git commit -m "actualizacion de plataforma"
+git push origin work
+```
+Luego en GitHub abre Pull Request y mergea a `main`.
+Render debe apuntar a `main` para mostrar los ultimos cambios.
+
 ## 2. Variables de entorno
 Configura en tu hosting:
 - `SECRET_KEY`

@@ -60,17 +60,17 @@ def _bootstrap_data() -> None:
     for nombres, apellidos, email, password in usuarios_demo:
         email_norm = email.strip().lower()
         existe = Usuario.query.filter_by(email=email_norm).first()
+        activo_por_rol = _es_rol_con_plan_activo(email_norm)
+        status_por_rol = "activo" if activo_por_rol else "pendiente_pago"
         if not existe:
-            db.session.add(
-                Usuario(
-                    nombres=nombres,
-                    apellidos=apellidos,
-                    email=email_norm,
-                    password_hash=generate_password_hash(password),
-                    activo=_es_rol_con_plan_activo(email_norm),
-                    status="activo" if _es_rol_con_plan_activo(email_norm) else "pendiente_pago",
-                )
-            )
+            existe = Usuario(email=email_norm)
+            db.session.add(existe)
+
+        existe.nombres = nombres
+        existe.apellidos = apellidos
+        existe.password_hash = generate_password_hash(password)
+        existe.activo = activo_por_rol
+        existe.status = status_por_rol
 
     db.session.commit()
 
@@ -126,6 +126,7 @@ def create_app(config_object: str | None = None) -> Flask:
         return {
             "service": "forjadores-del-futuro",
             "status": "ok",
+            "release": os.getenv("RENDER_GIT_COMMIT", os.getenv("RELEASE_VERSION", "local")),
             "time": datetime.utcnow().isoformat() + "Z",
             "database": app.config["SQLALCHEMY_DATABASE_URI"],
             "google_configured": bool(app.config.get("GOOGLE_CLIENT_ID") and app.config.get("GOOGLE_CLIENT_SECRET")),

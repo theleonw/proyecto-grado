@@ -44,3 +44,5 @@ Configura en tu hosting:
 - Usuario Google test: `google.test@forjadores.com` / `Google123*`
 
 Puedes cambiar estos valores con variables `DEFAULT_*` en `.env`.
+
+> Nota: en cada arranque, los usuarios demo se sincronizan (incluyendo password), para evitar credenciales antiguas en despliegues previos.

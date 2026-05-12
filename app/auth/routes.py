@@ -126,7 +126,8 @@ def _oauth_client():
 def login():
     if request.method == "GET":
         show_blocked = request.args.get("blocked") == "1"
-        return render_template("auth/login.html", show_blocked_modal=show_blocked)
+        google_enabled = bool(current_app.config.get("GOOGLE_CLIENT_ID") and current_app.config.get("GOOGLE_CLIENT_SECRET"))
+        return render_template("auth/login.html", show_blocked_modal=show_blocked, google_enabled=google_enabled)
 
     payload = request.get_json(silent=True)
     if payload is None:

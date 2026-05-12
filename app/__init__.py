@@ -55,12 +55,18 @@ def _bootstrap_data() -> None:
             os.getenv("DEFAULT_NOPAGO_EMAIL", "demo.nopago@forjadores.com"),
             os.getenv("DEFAULT_NOPAGO_PASSWORD", "NoPago123*"),
         ),
+        (
+            os.getenv("DEFAULT_PAGO_NAME", "Demo"),
+            os.getenv("DEFAULT_PAGO_LASTNAME", "Pago"),
+            os.getenv("DEFAULT_PAGO_EMAIL", "demo.pago@forjadores.com"),
+            os.getenv("DEFAULT_PAGO_PASSWORD", "Pago123*"),
+        ),
     ]
 
     for nombres, apellidos, email, password in usuarios_demo:
         email_norm = email.strip().lower()
         existe = Usuario.query.filter_by(email=email_norm).first()
-        activo_por_rol = _es_rol_con_plan_activo(email_norm)
+        activo_por_rol = _es_rol_con_plan_activo(email_norm) or "demo.pago" in email_norm
         status_por_rol = "activo" if activo_por_rol else "pendiente_pago"
         if not existe:
             existe = Usuario(email=email_norm)

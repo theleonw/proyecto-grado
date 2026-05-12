@@ -41,6 +41,36 @@
       </div>
     </div>
   </div>
+
+  <div class="row g-4 mt-1">
+    <div class="col-lg-6">
+      <div class="glass-card p-4">
+        <h3 class="h5 fw-bold">Registrar rendimiento</h3>
+        <form method="post" action="{{ url_for('entrenadores.crear_evaluacion') }}" class="row g-2">
+          <div class="col-12">
+            <select class="form-control" name="estudiante_id" required>
+              {% for e in estudiantes_activos %}<option value="{{ e.id }}">{{ e.codigo }} - {{ e.nombres }} {{ e.apellidos }}</option>{% endfor %}
+            </select>
+          </div>
+          <div class="col-6"><input class="form-control" name="disciplina" type="number" step="0.1" min="1" max="5" placeholder="Disciplina" required></div>
+          <div class="col-6"><input class="form-control" name="trabajo_equipo" type="number" step="0.1" min="1" max="5" placeholder="Trabajo equipo" required></div>
+          <div class="col-6"><input class="form-control" name="toma_decisiones" type="number" step="0.1" min="1" max="5" placeholder="Decisiones" required></div>
+          <div class="col-6"><input class="form-control" name="condicion_fisica" type="number" step="0.1" min="1" max="5" placeholder="Condicion fisica" required></div>
+          <div class="col-12"><button class="btn btn-grama w-100" type="submit">Guardar rendimiento</button></div>
+        </form>
+      </div>
+    </div>
+
+    <div class="col-lg-6">
+      <div class="glass-card p-4">
+        <h3 class="h5 fw-bold">Plan de entrenamiento con IA (Gemini)</h3>
+        <form method="post" action="{{ url_for('entrenadores.plan_ia') }}" class="d-grid gap-2">
+          <textarea class="form-control" name="objetivo" rows="4" placeholder="Ej: Mejorar resistencia y juego colectivo Sub-13"></textarea>
+          <button class="btn btn-outline-light" type="submit">Generar plan IA</button>
+        </form>
+      </div>
+    </div>
+  </div>
 </section>
 {% endblock %}
 

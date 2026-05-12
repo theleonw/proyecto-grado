@@ -158,14 +158,14 @@ def login():
 
     rol = _inferir_rol(usuario.email)
 
-    if _debe_tener_plan_inactivo(rol) and (not usuario.activo or usuario.status != "activo"):
-        flash("Tu plan esta inactivo. Completa el pago para entrar al portal.", "error")
-        return redirect(url_for("portal.pago"))
-
     session["user_id"] = usuario.id
     session["email"] = usuario.email
     session["nombre"] = f"{usuario.nombres} {usuario.apellidos}"
     session["rol"] = rol
+
+    if _debe_tener_plan_inactivo(rol) and (not usuario.activo or usuario.status != "activo"):
+        flash("Tu plan esta inactivo. Completa el pago para entrar al portal.", "error")
+        return redirect(url_for("portal.pago"))
 
     if request.is_json:
         return jsonify({"message": "Login exitoso", "rol": rol}), 200
@@ -272,14 +272,14 @@ def google_callback():
 
     rol = _inferir_rol(usuario.email)
 
-    if _debe_tener_plan_inactivo(rol) and (not usuario.activo or usuario.status != "activo"):
-        flash("Tu plan esta inactivo. Completa el pago para entrar al portal.", "error")
-        return redirect(url_for("portal.pago"))
-
     session["user_id"] = usuario.id
     session["email"] = usuario.email
     session["nombre"] = f"{usuario.nombres} {usuario.apellidos}"
     session["rol"] = rol
+
+    if _debe_tener_plan_inactivo(rol) and (not usuario.activo or usuario.status != "activo"):
+        flash("Tu plan esta inactivo. Completa el pago para entrar al portal.", "error")
+        return redirect(url_for("portal.pago"))
     flash("Acceso con Google exitoso.", "success")
     return _redirect_por_rol(rol)
 

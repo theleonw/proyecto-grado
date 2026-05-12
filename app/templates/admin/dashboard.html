@@ -36,6 +36,26 @@
         <canvas id="morososChart" height="120"></canvas>
       </div>
     </div>
+
+    <div class="col-12" data-aos="fade-up" data-aos-delay="160">
+      <div class="glass-card p-3 p-md-4">
+        <h3 class="h5 fw-bold mb-3">Crear usuario (Admin)</h3>
+        <form method="post" action="{{ url_for('admin.crear_usuario_admin') }}" class="row g-3">
+          <div class="col-md-3"><input class="form-control" name="nombres" placeholder="Nombres" required></div>
+          <div class="col-md-3"><input class="form-control" name="apellidos" placeholder="Apellidos" required></div>
+          <div class="col-md-3"><input class="form-control" type="email" name="email" placeholder="correo@forjadores.com" required></div>
+          <div class="col-md-3"><input class="form-control" type="password" name="password" placeholder="Password" required></div>
+          <div class="col-md-3">
+            <select class="form-control" name="rol">
+              <option value="USUARIO">USUARIO (pago requerido)</option>
+              <option value="ENTRENADOR">ENTRENADOR</option>
+              <option value="ADMIN">ADMIN</option>
+            </select>
+          </div>
+          <div class="col-md-3"><button class="btn btn-grama w-100" type="submit">Crear</button></div>
+        </form>
+      </div>
+    </div>
   </div>
 </section>
 {% endblock %}

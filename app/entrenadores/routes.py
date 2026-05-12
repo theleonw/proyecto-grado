@@ -1,10 +1,10 @@
 ﻿from datetime import date
 
-from flask import Blueprint, render_template
+from flask import Blueprint, flash, redirect, render_template, request, session, url_for
 
 from app.auth.routes import role_required
 from app.extensions import db
-from app.models import Estudiante, Evaluacion
+from app.models import Asistencia, Estudiante, Evaluacion, Metrica, Pago
 from app.utils.algoritmos import ProcesadorFutbol
 
 
@@ -27,6 +27,7 @@ def entrenadores_dashboard():
 
     ranking_view = [
         {
+            "id": item.estudiante.id,
             "nombre": f"{item.estudiante.nombres} {item.estudiante.apellidos}",
             "codigo": item.estudiante.codigo,
             "promedio": item.promedio_rendimiento,
@@ -47,3 +48,43 @@ def entrenadores_dashboard():
         evaluaciones_hoy=evaluaciones_hoy,
         total_estudiantes=len(estudiantes),
     )
+
+
+@entrenadores_bp.post("/actualizar")
+@role_required("ENTRENADOR", "ADMIN")
+def actualizar_rendimiento_asistencia():
+    estudiante_id = request.form.get("estudiante_id", type=int)
+    asistio = request.form.get("asistio") == "1"
+
+    estudiante = Estudiante.query.get(estudiante_id)
+    if not estudiante:
+        flash("Estudiante no encontrado", "error")
+        return redirect(url_for("entrenadores.entrenadores_dashboard"))
+
+    ultimo_pago = (
+        Pago.query.filter_by(estudiante_id=estudiante_id, estado="PAGADO")
+        .order_by(Pago.fecha_vencimiento.desc())
+        .first()
+    )
+    if not ultimo_pago or ultimo_pago.fecha_vencimiento < date.today():
+        flash("Solo usuarios pagos pueden registrar rendimiento/asistencia.", "error")
+        return redirect(url_for("entrenadores.entrenadores_dashboard"))
+
+    metric = Metrica(
+        estudiante_id=estudiante_id,
+        velocidad=request.form.get("velocidad", type=float),
+        resistencia=request.form.get("resistencia", type=float),
+        fuerza=request.form.get("fuerza", type=float),
+        tecnica=request.form.get("tecnica", type=float),
+    )
+    asistencia = Asistencia(
+        estudiante_id=estudiante_id,
+        registrado_por=session.get("user_id"),
+        asistio=asistio,
+        observacion=request.form.get("observacion", ""),
+    )
+    db.session.add(metric)
+    db.session.add(asistencia)
+    db.session.commit()
+    flash("Rendimiento y asistencia actualizados.", "success")
+    return redirect(url_for("entrenadores.entrenadores_dashboard"))

@@ -1,4 +1,5 @@
-﻿from flask import Blueprint, render_template
+﻿from werkzeug.security import generate_password_hash
+from flask import Blueprint, flash, redirect, render_template, request, url_for
 
 from app.admin.vistas import AdminReportesService
 from app.auth.routes import role_required
@@ -27,6 +28,8 @@ def admin_dashboard():
         "morosos": len(morosos),
     }
 
+    usuarios = Usuario.query.order_by(Usuario.created_at.desc()).limit(12).all()
+
     return render_template(
         "admin/dashboard.html",
         total_usuarios=total_usuarios,
@@ -36,4 +39,33 @@ def admin_dashboard():
         cuadro_honor=cuadro_honor,
         morosos=morosos,
         chart_data=chart_data,
+        usuarios=usuarios,
     )
+
+
+@admin_bp.post("/usuarios/crear")
+@role_required("ADMIN")
+def crear_usuario_admin():
+    email = (request.form.get("email") or "").strip().lower()
+    if not email:
+        flash("Email requerido", "error")
+        return redirect(url_for("admin.admin_dashboard"))
+
+    existe = Usuario.query.filter_by(email=email).first()
+    if existe:
+        flash("El usuario ya existe", "error")
+        return redirect(url_for("admin.admin_dashboard"))
+
+    rol = request.form.get("rol", "USUARIO")
+    user = Usuario(
+        nombres=request.form.get("nombres", "Nuevo"),
+        apellidos=request.form.get("apellidos", "Usuario"),
+        email=email,
+        password_hash=generate_password_hash(request.form.get("password", "Temporal123*")),
+        activo=rol in {"ADMIN", "ENTRENADOR"},
+        status="activo" if rol in {"ADMIN", "ENTRENADOR"} else "pendiente_pago",
+    )
+    db.session.add(user)
+    db.session.commit()
+    flash("Usuario creado correctamente", "success")
+    return redirect(url_for("admin.admin_dashboard"))

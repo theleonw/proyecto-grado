@@ -37,6 +37,27 @@
       </div>
     </div>
   </div>
+  <div class="row g-4 mt-2">
+    <div class="col-lg-6">
+      <div class="glass-card p-4">
+        <h3 class="h5 fw-bold">Crear usuarios / entrenadores</h3>
+        <form method="post" action="{{ url_for('admin.crear_usuario_admin') }}" class="row g-2">
+          <div class="col-6"><input class="form-control" name="nombres" placeholder="Nombres" required></div>
+          <div class="col-6"><input class="form-control" name="apellidos" placeholder="Apellidos" required></div>
+          <div class="col-7"><input class="form-control" type="email" name="email" placeholder="Correo" required></div>
+          <div class="col-5"><select class="form-select" name="rol"><option>USUARIO</option><option>ENTRENADOR</option><option>ADMIN</option></select></div>
+          <div class="col-12"><input class="form-control" name="password" placeholder="Password temporal"></div>
+          <div class="col-12"><button class="btn btn-grama">Crear</button></div>
+        </form>
+      </div>
+    </div>
+    <div class="col-lg-6">
+      <div class="glass-card p-4">
+        <h3 class="h5 fw-bold">Ultimos usuarios</h3>
+        <ul class="list-group">{% for u in usuarios %}<li class="list-group-item bg-dark text-light d-flex justify-content-between"><span>{{ u.email }}</span><span class="badge {{ 'text-bg-success' if u.status=='activo' else 'text-bg-warning' }}">{{ u.status }}</span></li>{% endfor %}</ul>
+      </div>
+    </div>
+  </div>
 </section>
 {% endblock %}
 

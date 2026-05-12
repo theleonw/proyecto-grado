@@ -43,12 +43,42 @@ def _bootstrap_data() -> None:
         ("Admin", "Sistema", os.getenv("DEFAULT_ADMIN_EMAIL", "admin@forjadores.com"), os.getenv("DEFAULT_ADMIN_PASSWORD", "Admin123*")),
         ("Laura", "Entrenadora", "entrenador@forjadores.com", "Coach123*"),
         ("Carlos", "Jugador", "usuario@forjadores.com", "User123*"),
+        (
+            os.getenv("DEFAULT_GOOGLE_TEST_NAME", "Google"),
+            os.getenv("DEFAULT_GOOGLE_TEST_LASTNAME", "Tester"),
+            os.getenv("DEFAULT_GOOGLE_TEST_EMAIL", "google.test@forjadores.com"),
+            os.getenv("DEFAULT_GOOGLE_TEST_PASSWORD", "Google123*"),
+        ),
+        (
+            os.getenv("DEFAULT_NOPAGO_NAME", "Demo"),
+            os.getenv("DEFAULT_NOPAGO_LASTNAME", "NoPago"),
+            os.getenv("DEFAULT_NOPAGO_EMAIL", "demo.nopago@forjadores.com"),
+            os.getenv("DEFAULT_NOPAGO_PASSWORD", "NoPago123*"),
+        ),
+        (
+            os.getenv("DEFAULT_PAGO_NAME", "Demo"),
+            os.getenv("DEFAULT_PAGO_LASTNAME", "Pago"),
+            os.getenv("DEFAULT_PAGO_EMAIL", "demo.pago@forjadores.com"),
+            os.getenv("DEFAULT_PAGO_PASSWORD", "Pago123*"),
+        ),
     ]
 
     for nombres, apellidos, email, password in usuarios_demo:
         email_norm = email.strip().lower()
         existe = Usuario.query.filter_by(email=email_norm).first()
+        activo_por_rol = _es_rol_con_plan_activo(email_norm) or "demo.pago" in email_norm
+        status_por_rol = "activo" if activo_por_rol else "pendiente_pago"
         if not existe:
+<<<<<<< HEAD
+            existe = Usuario(email=email_norm)
+            db.session.add(existe)
+
+        existe.nombres = nombres
+        existe.apellidos = apellidos
+        existe.password_hash = generate_password_hash(password)
+        existe.activo = activo_por_rol
+        existe.status = status_por_rol
+=======
             db.session.add(
                 Usuario(
                     nombres=nombres,
@@ -59,6 +89,7 @@ def _bootstrap_data() -> None:
                     status="activo" if _es_rol_con_plan_activo(email_norm) else "pendiente_pago",
                 )
             )
+>>>>>>> origin/main
 
     db.session.commit()
 
@@ -76,8 +107,9 @@ def create_app(config_object: str | None = None) -> Flask:
         SECRET_KEY=os.getenv("SECRET_KEY", "forjadores-secret-key"),
         SQLALCHEMY_DATABASE_URI=os.getenv("DATABASE_URL", sqlite_url),
         SQLALCHEMY_TRACK_MODIFICATIONS=False,
-        GOOGLE_CLIENT_ID=os.getenv("GOOGLE_CLIENT_ID", ""),
-        GOOGLE_CLIENT_SECRET=os.getenv("GOOGLE_CLIENT_SECRET", ""),
+        GOOGLE_CLIENT_ID=os.getenv("GOOGLE_CLIENT_ID") or os.getenv("GOOGLE_OAUTH_CLIENT_ID", ""),
+        GOOGLE_CLIENT_SECRET=os.getenv("GOOGLE_CLIENT_SECRET") or os.getenv("GOOGLE_OAUTH_CLIENT_SECRET", ""),
+        GOOGLE_REDIRECT_URI=os.getenv("GOOGLE_REDIRECT_URI", ""),
         RECAPTCHA_SITE_KEY=os.getenv("RECAPTCHA_SITE_KEY", ""),
         RECAPTCHA_SECRET_KEY=os.getenv("RECAPTCHA_SECRET_KEY", ""),
         STRIPE_SECRET_KEY=os.getenv("STRIPE_SECRET_KEY", ""),
@@ -113,6 +145,7 @@ def create_app(config_object: str | None = None) -> Flask:
         return {
             "service": "forjadores-del-futuro",
             "status": "ok",
+            "release": os.getenv("RENDER_GIT_COMMIT", os.getenv("RELEASE_VERSION", "local")),
             "time": datetime.utcnow().isoformat() + "Z",
             "database": app.config["SQLALCHEMY_DATABASE_URI"],
             "google_configured": bool(app.config.get("GOOGLE_CLIENT_ID") and app.config.get("GOOGLE_CLIENT_SECRET")),

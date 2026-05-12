@@ -108,7 +108,8 @@ def _oauth_client():
     if not client_id or not client_secret:
         return oauth, None
 
-    if "google" not in getattr(oauth, "_clients", {}):
+    google = oauth.create_client("google")
+    if google is None:
         oauth.register(
             name="google",
             server_metadata_url="https://accounts.google.com/.well-known/openid-configuration",
@@ -116,15 +117,17 @@ def _oauth_client():
             client_secret=client_secret,
             client_kwargs={"scope": "openid email profile"},
         )
+        google = oauth.create_client("google")
 
-    return oauth, oauth.create_client("google")
+    return oauth, google
 
 
 @auth_bp.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "GET":
         show_blocked = request.args.get("blocked") == "1"
-        return render_template("auth/login.html", show_blocked_modal=show_blocked)
+        google_enabled = bool(current_app.config.get("GOOGLE_CLIENT_ID") and current_app.config.get("GOOGLE_CLIENT_SECRET"))
+        return render_template("auth/login.html", show_blocked_modal=show_blocked, google_enabled=google_enabled)
 
     payload = request.get_json(silent=True)
     if payload is None:
@@ -155,19 +158,77 @@ def login():
 
     rol = _inferir_rol(usuario.email)
 
+<<<<<<< HEAD
+=======
     if _debe_tener_plan_inactivo(rol) and (not usuario.activo or usuario.status != "activo"):
         flash("Tu plan esta inactivo. Completa el pago para entrar al portal.", "error")
         return redirect(url_for("portal.pago"))
 
+>>>>>>> origin/main
     session["user_id"] = usuario.id
     session["email"] = usuario.email
     session["nombre"] = f"{usuario.nombres} {usuario.apellidos}"
     session["rol"] = rol
 
+    if _debe_tener_plan_inactivo(rol) and (not usuario.activo or usuario.status != "activo"):
+        flash("Tu plan esta inactivo. Completa el pago para entrar al portal.", "error")
+        return redirect(url_for("portal.pago"))
+
     if request.is_json:
         return jsonify({"message": "Login exitoso", "rol": rol}), 200
     flash("Bienvenido al sistema", "success")
     return _redirect_por_rol(rol)
+
+
+@auth_bp.route("/registro", methods=["GET", "POST"])
+def registro():
+    if request.method == "GET":
+        return render_template("auth/registro.html")
+
+    payload = request.get_json(silent=True) or request.form.to_dict()
+    nombres = (payload.get("nombres") or "").strip()
+    apellidos = (payload.get("apellidos") or "").strip()
+    email = (payload.get("email") or "").strip().lower()
+    password = payload.get("password") or ""
+
+    if not nombres or not apellidos or not email or not password:
+        flash("Completa todos los campos para registrarte.", "error")
+        return redirect(url_for("auth.registro"))
+
+    try:
+        existente = Usuario.query.filter_by(email=email).first()
+        if existente:
+            flash("Ese correo ya existe. Inicia sesion.", "error")
+            return redirect(url_for("auth.login"))
+
+        rol = _inferir_rol(email)
+        usuario = Usuario(
+            nombres=nombres,
+            apellidos=apellidos,
+            email=email,
+            password_hash=generate_password_hash(password),
+            activo=not _debe_tener_plan_inactivo(rol),
+            status="pendiente_pago" if _debe_tener_plan_inactivo(rol) else "activo",
+        )
+        from app.extensions import db
+
+        db.session.add(usuario)
+        db.session.commit()
+    except SQLAlchemyError:
+        flash("No fue posible crear la cuenta. Intenta de nuevo.", "error")
+        return redirect(url_for("auth.registro"))
+
+    session["user_id"] = usuario.id
+    session["email"] = usuario.email
+    session["nombre"] = f"{usuario.nombres} {usuario.apellidos}"
+    session["rol"] = _inferir_rol(usuario.email)
+
+    if _debe_tener_plan_inactivo(session["rol"]):
+        flash("Cuenta creada. Ahora activa tu plan para ingresar.", "success")
+        return redirect(url_for("portal.pago"))
+
+    flash("Cuenta creada correctamente.", "success")
+    return _redirect_por_rol(session["rol"])
 
 
 @auth_bp.get("/google")
@@ -176,7 +237,7 @@ def google_login():
     if google is None:
         flash("Google OAuth no configurado. Define GOOGLE_CLIENT_ID y GOOGLE_CLIENT_SECRET.", "error")
         return redirect(url_for("auth.login"))
-    redirect_uri = url_for("auth.google_callback", _external=True)
+    redirect_uri = current_app.config.get("GOOGLE_REDIRECT_URI") or url_for("auth.google_callback", _external=True)
     return google.authorize_redirect(redirect_uri)
 
 
@@ -187,7 +248,11 @@ def google_callback():
         flash("Google OAuth no disponible.", "error")
         return redirect(url_for("auth.login"))
 
-    token = google.authorize_access_token()
+    try:
+        token = google.authorize_access_token()
+    except Exception:
+        flash("No se pudo completar autenticacion con Google. Revisa credenciales y redirect URI.", "error")
+        return redirect(url_for("auth.login"))
     userinfo = token.get("userinfo")
     if not userinfo:
         userinfo = google.userinfo()
@@ -214,14 +279,21 @@ def google_callback():
 
     rol = _inferir_rol(usuario.email)
 
+<<<<<<< HEAD
+=======
     if _debe_tener_plan_inactivo(rol) and (not usuario.activo or usuario.status != "activo"):
         flash("Tu plan esta inactivo. Completa el pago para entrar al portal.", "error")
         return redirect(url_for("portal.pago"))
 
+>>>>>>> origin/main
     session["user_id"] = usuario.id
     session["email"] = usuario.email
     session["nombre"] = f"{usuario.nombres} {usuario.apellidos}"
     session["rol"] = rol
+
+    if _debe_tener_plan_inactivo(rol) and (not usuario.activo or usuario.status != "activo"):
+        flash("Tu plan esta inactivo. Completa el pago para entrar al portal.", "error")
+        return redirect(url_for("portal.pago"))
     flash("Acceso con Google exitoso.", "success")
     return _redirect_por_rol(rol)
 

@@ -1,0 +1,33 @@
+{% extends "layout.html" %}
+
+{% block title %}Activar plan | Forjadores{% endblock %}
+
+{% block content %}
+<section class="payment-hero py-5 py-lg-6 overflow-hidden">
+  <div class="payment-blur payment-blur-a"></div>
+  <div class="payment-blur payment-blur-b"></div>
+  <div class="container position-relative">
+    <div class="text-center mb-5" data-aos="fade-up">
+      <span class="badge text-bg-success rounded-pill px-3 py-2 mb-3">Portal de pagos</span>
+      <h1 class="display-5 fw-bold mb-3">Activa tu plan y vuelve al entrenamiento</h1>
+      <p class="text-secondary mb-0">Animaciones fluidas, seleccion rapida de plan y activacion inmediata de tu cuenta.</p>
+    </div>
+
+    <div class="row g-4 justify-content-center">
+      {% for key, plan in planes.items() %}
+      <div class="col-12 col-md-6 col-lg-4" data-aos="zoom-in" data-aos-delay="{{ loop.index0 * 120 }}">
+        <article class="glass-card payment-card h-100 p-4">
+          <h2 class="h4 fw-bold">Plan {{ plan.nombre }}</h2>
+          <p class="text-secondary mb-3">Vigencia: {{ plan.dias }} dias.</p>
+          <p class="display-6 fw-bold text-white mb-4">${{ '{:,.0f}'.format(plan.precio) }}</p>
+          <form method="post" action="{{ url_for('portal.crear_checkout') }}">
+            <input type="hidden" name="plan" value="{{ key }}">
+            <button type="submit" class="btn btn-grama w-100 fw-bold py-2">Pagar con Stripe</button>
+          </form>
+        </article>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}

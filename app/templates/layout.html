@@ -25,6 +25,7 @@
         <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2">
           {% if not session.get('user_id') %}
             <li class="nav-item"><a class="nav-link" href="{{ url_for('pagina.inicio') }}">Inicio</a></li>
+            <li class="nav-item"><a class="btn btn-outline-light px-3" href="{{ url_for('auth.registro') }}">Registrarse</a></li>
             <li class="nav-item"><a class="btn btn-grama px-3" href="{{ url_for('auth.login') }}">Login</a></li>
           {% else %}
             <li class="nav-item text-light small me-lg-2">

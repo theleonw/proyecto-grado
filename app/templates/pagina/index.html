@@ -1,4 +1,4 @@
-﻿{% extends "layout.html" %}
+{% extends "layout.html" %}
 
 {% block title %}Inicio | Forjadores del Futuro{% endblock %}
 
@@ -14,12 +14,16 @@
       <div class="col-lg-7" data-aos="fade-up">
         <span class="badge bg-success mb-3">Plataforma Oficial</span>
         <h1 class="display-4 fw-bold mb-3">Forjadores del Futuro</h1>
-        <p class="lead text-light-emphasis mb-4">Entrena, mide, paga y escala en ranking desde una plataforma moderna para admin, entrenador y jugadores.</p>
-        <a href="{{ url_for('auth.login') }}" class="btn btn-grama btn-lg px-4 py-3">Acceso a Intranet</a>
+        <p class="lead text-light-emphasis mb-4">Dashboard para usuarios, entrenadores y admin con pagos, analitica y sugerencias inteligentes.</p>
+        <div class="d-flex gap-2 flex-wrap">
+          <a href="{{ url_for('auth.login') }}" class="btn btn-grama btn-lg px-4 py-3">Entrar ahora</a>
+          <a href="{{ url_for('auth.registro') }}" class="btn btn-outline-light btn-lg px-4 py-3">Registrarse</a>
+          <a href="{{ url_for('portal.pago') }}" class="btn btn-outline-light btn-lg px-4 py-3">Ver planes y pagar</a>
+        </div>
       </div>
       <div class="col-lg-5" data-aos="fade-up" data-aos-delay="120">
         <div class="glass-card p-3">
-          <img class="img-fluid rounded-4" src="https://images.unsplash.com/photo-1579952363873-27d3bfad9c0d?auto=format&fit=crop&w=1200&q=80" alt="Entrenamiento de futbol juvenil">
+          <canvas id="landingChart" height="240"></canvas>
         </div>
       </div>
     </div>
@@ -29,20 +33,22 @@
 <section class="py-5">
   <div class="container">
     <div class="row g-4">
-      <div class="col-lg-6" data-aos="fade-up">
+      <div class="col-lg-4" data-aos="flip-left">
         <div class="glass-card p-4 h-100">
-          <h2 class="fw-bold mb-3">Quienes Somos</h2>
-          <p class="text-secondary mb-0">Sistema académico-deportivo para seguimiento integral, asistencia, evaluaciones y pagos con trazabilidad.</p>
+          <h3 class="h5 fw-bold">Usuarios</h3>
+          <p class="text-secondary">Miran su progreso, comparan habilidades y reciben tips de mejora con IA.</p>
         </div>
       </div>
-      <div class="col-lg-6" data-aos="fade-up" data-aos-delay="100">
+      <div class="col-lg-4" data-aos="flip-left" data-aos-delay="100">
         <div class="glass-card p-4 h-100">
-          <h2 class="fw-bold mb-3">Categorias</h2>
-          <div class="d-flex flex-wrap gap-2">
-            {% for cat in ['Sub-10', 'Sub-11', 'Sub-12', 'Sub-13', 'Sub-14', 'Sub-15'] %}
-              <span class="badge text-bg-dark border border-success">{{ cat }}</span>
-            {% endfor %}
-          </div>
+          <h3 class="h5 fw-bold">Entrenadores</h3>
+          <p class="text-secondary">Gestionan evaluaciones, asistencia y ranking para decisiones deportivas.</p>
+        </div>
+      </div>
+      <div class="col-lg-4" data-aos="flip-left" data-aos-delay="200">
+        <div class="glass-card p-4 h-100">
+          <h3 class="h5 fw-bold">Administradores</h3>
+          <p class="text-secondary">Controlan pagos, morosidad y KPIs globales en tiempo real.</p>
         </div>
       </div>
     </div>
@@ -51,35 +57,38 @@
 
 <section class="pb-5">
   <div class="container" data-aos="fade-up">
-    <div class="glass-card p-4 p-md-5">
-      <h3 class="fw-bold mb-3">Contacto</h3>
-      <p class="text-secondary mb-4">Envíanos un mensaje. Este formulario valida con reCAPTCHA v3 invisible.</p>
-      <form id="contact-form" method="post" action="{{ url_for('pagina.contacto') }}" class="row g-3">
-        <div class="col-md-6"><input class="form-control" type="text" name="nombre" placeholder="Nombre" required></div>
-        <div class="col-md-6"><input class="form-control" type="email" name="email" placeholder="Correo" required></div>
-        <div class="col-12"><textarea class="form-control" name="mensaje" rows="4" placeholder="Mensaje" required></textarea></div>
-        <input type="hidden" name="recaptcha_token" id="recaptcha_token">
-        <div class="col-12"><button class="btn btn-grama px-4" type="submit">Enviar</button></div>
-      </form>
+    <div class="glass-card p-4 p-md-5 text-center">
+      <h3 class="fw-bold mb-3">Activa tu plan y desbloquea el rendimiento</h3>
+      <p class="text-secondary mb-4">Pago rapido, activacion inmediata y acceso a reportes de progreso.</p>
+      <a href="{{ url_for('portal.pago') }}" class="btn btn-grama px-4 py-2">Ir a pagos</a>
     </div>
   </div>
 </section>
 {% endblock %}
 
 {% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 {% if recaptcha_site_key %}
 <script src="https://www.google.com/recaptcha/api.js?render={{ recaptcha_site_key }}"></script>
+{% endif %}
 <script>
-  const contactForm = document.getElementById('contact-form');
-  if (contactForm) {
-    contactForm.addEventListener('submit', function (e) {
-      e.preventDefault();
-      grecaptcha.ready(function() {
-        grecaptcha.execute('{{ recaptcha_site_key }}', {action: 'contact'}).then(function(token) {
-          document.getElementById('recaptcha_token').value = token;
-          contactForm.submit();
-        });
-      });
+  const landingCtx = document.getElementById('landingChart');
+  if (landingCtx) {
+    new Chart(landingCtx, {
+      type: 'bar',
+      data: {
+        labels: ['Asistencia', 'Tecnica', 'Resistencia', 'Pagos al dia'],
+        datasets: [{
+          label: 'Indicadores plataforma',
+          data: [89, 78, 74, 82],
+          borderRadius: 8,
+          backgroundColor: ['#56d364', '#1f6feb', '#d29922', '#2ea043']
+        }]
+      },
+      options: {
+        plugins: { legend: { labels: { color: '#c9d1d9' } } },
+        scales: { y: { beginAtZero: true, ticks: { color: '#c9d1d9' } }, x: { ticks: { color: '#c9d1d9' } } }
+      }
     });
   }
 
@@ -88,9 +97,8 @@
     const x = (e.clientX / window.innerWidth - 0.5) * 14;
     const y = (e.clientY / window.innerHeight - 0.5) * 14;
     logos.forEach((el, i) => {
-      el.style.transform = `translate(${x * (i + 1) * 0.25}px, ${y * (i + 1) * 0.25}px)`;
+      el.style.transform = `translate(${x * (i + 1) * 0.25}px, ${y * (i + 1) * 0.25}px) rotate(${x * 0.25}deg)`;
     });
   });
 </script>
-{% endif %}
 {% endblock %}

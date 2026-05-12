@@ -69,6 +69,7 @@ def _bootstrap_data() -> None:
         activo_por_rol = _es_rol_con_plan_activo(email_norm) or "demo.pago" in email_norm
         status_por_rol = "activo" if activo_por_rol else "pendiente_pago"
         if not existe:
+<<<<<<< HEAD
             existe = Usuario(email=email_norm)
             db.session.add(existe)
 
@@ -77,6 +78,18 @@ def _bootstrap_data() -> None:
         existe.password_hash = generate_password_hash(password)
         existe.activo = activo_por_rol
         existe.status = status_por_rol
+=======
+            db.session.add(
+                Usuario(
+                    nombres=nombres,
+                    apellidos=apellidos,
+                    email=email_norm,
+                    password_hash=generate_password_hash(password),
+                    activo=_es_rol_con_plan_activo(email_norm),
+                    status="activo" if _es_rol_con_plan_activo(email_norm) else "pendiente_pago",
+                )
+            )
+>>>>>>> origin/main
 
     db.session.commit()
 

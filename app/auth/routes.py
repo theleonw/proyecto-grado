@@ -158,6 +158,13 @@ def login():
 
     rol = _inferir_rol(usuario.email)
 
+<<<<<<< HEAD
+=======
+    if _debe_tener_plan_inactivo(rol) and (not usuario.activo or usuario.status != "activo"):
+        flash("Tu plan esta inactivo. Completa el pago para entrar al portal.", "error")
+        return redirect(url_for("portal.pago"))
+
+>>>>>>> origin/main
     session["user_id"] = usuario.id
     session["email"] = usuario.email
     session["nombre"] = f"{usuario.nombres} {usuario.apellidos}"
@@ -272,6 +279,13 @@ def google_callback():
 
     rol = _inferir_rol(usuario.email)
 
+<<<<<<< HEAD
+=======
+    if _debe_tener_plan_inactivo(rol) and (not usuario.activo or usuario.status != "activo"):
+        flash("Tu plan esta inactivo. Completa el pago para entrar al portal.", "error")
+        return redirect(url_for("portal.pago"))
+
+>>>>>>> origin/main
     session["user_id"] = usuario.id
     session["email"] = usuario.email
     session["nombre"] = f"{usuario.nombres} {usuario.apellidos}"

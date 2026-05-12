@@ -29,8 +29,15 @@
               <td>{{ item.nombre }}</td>
               <td><span class="badge text-bg-primary">{{ item.promedio }}</span></td>
               <td>
-                <button class="btn btn-sm btn-outline-success coach-btn">Asistencia</button>
-                <button class="btn btn-sm btn-outline-light coach-btn">Evaluar</button>
+                <form method="post" action="{{ url_for('entrenadores.actualizar_rendimiento_asistencia') }}" class="d-flex flex-wrap gap-1">
+                <input type="hidden" name="estudiante_id" value="{{ item.id }}">
+                <input class="form-control form-control-sm" style="max-width:80px" name="velocidad" placeholder="Vel">
+                <input class="form-control form-control-sm" style="max-width:80px" name="resistencia" placeholder="Res">
+                <input class="form-control form-control-sm" style="max-width:80px" name="fuerza" placeholder="Fza">
+                <input class="form-control form-control-sm" style="max-width:80px" name="tecnica" placeholder="Tec">
+                <select name="asistio" class="form-select form-select-sm" style="max-width:110px"><option value="1">Asistio</option><option value="0">Falto</option></select>
+                <button class="btn btn-sm btn-outline-success coach-btn">Guardar</button>
+                </form>
               </td>
             </tr>
             {% else %}

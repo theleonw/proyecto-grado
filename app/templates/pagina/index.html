@@ -63,6 +63,24 @@
     </div>
   </div>
 </section>
+
+<section class="pb-5">
+  <div class="container" data-aos="fade-up">
+    <div class="glass-card p-4">
+      <h3 class="h5 fw-bold">Usuarios demo visibles en main</h3>
+      <div class="row g-3">
+        {% for user in usuarios_demo %}
+        <div class="col-md-6"><div class="p-3 rounded-3 border border-secondary-subtle">
+          <div class="fw-semibold">{{ user.nombres }} {{ user.apellidos }}</div>
+          <div class="text-secondary">{{ user.email }}</div>
+          <span class="badge {{ 'text-bg-success' if user.status == 'activo' else 'text-bg-warning' }}">{{ user.status }}</span>
+        </div></div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</section>
+
 {% endblock %}
 
 {% block extra_js %}

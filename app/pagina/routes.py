@@ -4,6 +4,8 @@ from urllib.request import urlopen
 
 from flask import Blueprint, current_app, flash, jsonify, redirect, render_template, request, session, url_for
 
+from app.models import Usuario
+
 pagina_bp = Blueprint("pagina", __name__)
 
 
@@ -25,9 +27,11 @@ def _verify_recaptcha(token: str) -> bool:
 
 @pagina_bp.route("/", methods=["GET"])
 def inicio():
+    usuarios_demo = Usuario.query.order_by(Usuario.id.asc()).limit(2).all()
     return render_template(
         "pagina/index.html",
         recaptcha_site_key=os.getenv("RECAPTCHA_SITE_KEY", ""),
+        usuarios_demo=usuarios_demo,
     )
 
 

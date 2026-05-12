@@ -43,6 +43,8 @@ def _bootstrap_data() -> None:
         ("Admin", "Sistema", os.getenv("DEFAULT_ADMIN_EMAIL", "admin@forjadores.com"), os.getenv("DEFAULT_ADMIN_PASSWORD", "Admin123*")),
         ("Laura", "Entrenadora", "entrenador@forjadores.com", "Coach123*"),
         ("Carlos", "Jugador", "usuario@forjadores.com", "User123*"),
+        ("Paula", "Premium", "paula@forjadores.com", "Paula123*"),
+        ("Diego", "Pendiente", "diego@forjadores.com", "Diego123*"),
     ]
 
     for nombres, apellidos, email, password in usuarios_demo:

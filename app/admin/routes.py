@@ -1,4 +1,6 @@
-﻿from werkzeug.security import generate_password_hash
+﻿from datetime import date, datetime
+
+from werkzeug.security import generate_password_hash
 from flask import Blueprint, flash, redirect, render_template, request, url_for
 
 from app.admin.vistas import AdminReportesService
@@ -68,4 +70,41 @@ def crear_usuario_admin():
     db.session.add(user)
     db.session.commit()
     flash("Usuario creado correctamente", "success")
+    return redirect(url_for("admin.admin_dashboard"))
+
+
+@admin_bp.post("/usuarios/activar-pago")
+@role_required("ADMIN")
+def activar_pago_usuario():
+    user_id = request.form.get("user_id", type=int)
+    monto = request.form.get("monto", type=float) or 85000
+
+    usuario = Usuario.query.get(user_id) if user_id else None
+    if not usuario:
+        flash("Usuario no encontrado.", "error")
+        return redirect(url_for("admin.admin_dashboard"))
+
+    usuario.activo = True
+    usuario.status = "activo"
+
+    estudiantes_usuario = (
+        db.session.query(Estudiante)
+        .join(Estudiante.acudiente)
+        .filter_by(usuario_id=usuario.id)
+        .all()
+    )
+    for estudiante in estudiantes_usuario:
+        pago = Pago(
+            estudiante_id=estudiante.id,
+            registrado_por=usuario.id,
+            monto=monto,
+            fecha_emision=date.today(),
+            fecha_vencimiento=date.today().replace(day=28),
+            fecha_pago=datetime.utcnow(),
+            estado="PAGADO",
+        )
+        db.session.add(pago)
+
+    db.session.commit()
+    flash("Pago activado y acceso habilitado para el usuario.", "success")
     return redirect(url_for("admin.admin_dashboard"))

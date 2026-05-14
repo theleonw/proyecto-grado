@@ -43,6 +43,13 @@ body {
   background: radial-gradient(circle at 20% 20%, rgba(35,134,54,.15), transparent 40%), #0d1117;
 }
 
+.hero-whop {
+  position: relative;
+  min-height: 72vh;
+  overflow: hidden;
+  background: #ffffff;
+}
+
 .hero-grid {
   position: absolute;
   inset: 0;
@@ -104,6 +111,15 @@ body {
 
 .coach-btn { transition: transform .3s ease; }
 .coach-btn:hover { transform: scale(1.08); }
+
+.chat-widget-mini {
+  border: 1px solid #30363d;
+  border-radius: 12px;
+  padding: 12px;
+  background: rgba(13,17,23,.65);
+  display: grid;
+  gap: 8px;
+}
 
 .fade-in-up { animation: fadeUp .55s ease both; }
 @keyframes fadeUp { from { opacity:0; transform: translateY(12px);} to { opacity:1; transform: translateY(0);} }

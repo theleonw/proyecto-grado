@@ -3,7 +3,7 @@
 {% block title %}Inicio | Forjadores del Futuro{% endblock %}
 
 {% block content %}
-<section class="hero-github d-flex align-items-center">
+<section class="hero-whop d-flex align-items-center">
   <div class="hero-grid"></div>
   <div class="floating-logo logo-a">FBC</div>
   <div class="floating-logo logo-b">SUB</div>
@@ -12,12 +12,12 @@
   <div class="container py-5 position-relative">
     <div class="row align-items-center g-4">
       <div class="col-lg-7" data-aos="fade-up">
-        <span class="badge bg-success mb-3">Plataforma Oficial</span>
-        <h1 class="display-4 fw-bold mb-3">Forjadores del Futuro</h1>
-        <p class="lead text-light-emphasis mb-4">Dashboard para usuarios, entrenadores y admin con pagos, analitica y sugerencias inteligentes.</p>
+        <span class="badge bg-dark mb-3">SaaS deportivo PRO</span>
+        <h1 class="display-4 fw-bold mb-3 text-dark">Landing profesional estilo plataforma premium</h1>
+        <p class="lead text-secondary mb-4">Experiencia completa: pagos activables por admin, chatbot en todos los paneles, y acceso para usuarios, entrenadores y directivos.</p>
         <div class="d-flex gap-2 flex-wrap">
           <a href="{{ url_for('auth.login') }}" class="btn btn-grama btn-lg px-4 py-3">Entrar ahora</a>
-          <a href="{{ url_for('portal.pago') }}" class="btn btn-outline-light btn-lg px-4 py-3">Ver planes y pagar</a>
+          <a href="{{ url_for('portal.pago') }}" class="btn btn-outline-dark btn-lg px-4 py-3">Ver planes y pagar</a>
         </div>
       </div>
       <div class="col-lg-5" data-aos="fade-up" data-aos-delay="120">
@@ -29,7 +29,7 @@
   </div>
 </section>
 
-<section class="py-5">
+<section class="py-5 bg-white text-dark">
   <div class="container">
     <div class="row g-4">
       <div class="col-lg-4" data-aos="flip-left">
@@ -54,12 +54,26 @@
   </div>
 </section>
 
-<section class="pb-5">
+<section class="pb-5 bg-white text-dark">
   <div class="container" data-aos="fade-up">
     <div class="glass-card p-4 p-md-5 text-center">
       <h3 class="fw-bold mb-3">Activa tu plan y desbloquea el rendimiento</h3>
       <p class="text-secondary mb-4">Pago rapido, activacion inmediata y acceso a reportes de progreso.</p>
       <a href="{{ url_for('portal.pago') }}" class="btn btn-grama px-4 py-2">Ir a pagos</a>
+    </div>
+  </div>
+</section>
+
+<section class="pb-5 bg-white text-dark">
+  <div class="container">
+    <div class="glass-card p-4">
+      <h3 class="fw-bold">Arquitectura Render + variables de entorno</h3>
+      <p class="text-secondary mb-2">Para desplegar en Render sin subir .env al repo, define variables en el Dashboard de Render (Environment) o en <code>render.yaml</code>. La app las toma automatico al iniciar.</p>
+      <ul class="mb-0">
+        <li>Separar secretos por entorno (dev / staging / prod).</li>
+        <li>Activar rotacion de claves y versionado de variables.</li>
+        <li>Usar PostgreSQL administrado + backups automaticos.</li>
+      </ul>
     </div>
   </div>
 </section>

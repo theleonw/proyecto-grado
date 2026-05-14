@@ -12,7 +12,18 @@
   <div class="row g-4 mb-4">
     <div class="col-md-6 col-xl-3"><div class="glass-card p-3"><p class="mb-1 text-secondary">Evaluaciones hoy</p><h2>{{ evaluaciones_hoy }}</h2></div></div>
     <div class="col-md-6 col-xl-3"><div class="glass-card p-3"><p class="mb-1 text-secondary">Total estudiantes</p><h2>{{ total_estudiantes }}</h2></div></div>
+    <div class="col-md-6 col-xl-3"><div class="glass-card p-3"><p class="mb-1 text-secondary">Asistieron hoy</p><h2>{{ asistieron_hoy }}</h2></div></div>
     <div class="col-xl-6"><div class="glass-card p-3"><canvas id="teamTrendChart" height="90"></canvas></div></div>
+  </div>
+  <div class="glass-card p-4 mb-4">
+    <h3 class="h5 fw-bold mb-3">Estudiantes presentes / activos</h3>
+    <div class="row g-2">
+      {% for item in estudiantes_hoy %}
+      <div class="col-md-4"><div class="p-3 rounded-3 border border-secondary-subtle">{{ item.nombre }} <span class="badge text-bg-success">En equipo</span></div></div>
+      {% else %}
+      <div class="col-12 text-secondary">Aun no hay estudiantes visibles.</div>
+      {% endfor %}
+    </div>
   </div>
 
   <div class="card glass-card border-0 rounded-4" data-aos="fade-up" data-aos-delay="100">
@@ -46,6 +57,14 @@
           </tbody>
         </table>
       </div>
+    </div>
+  </div>
+  <div class="glass-card p-4 mt-4">
+    <h3 class="h5 fw-bold">Chatbot del entrenador</h3>
+    <p class="text-secondary mb-2">Asistente IA activo para planificacion de sesiones y feedback.</p>
+    <div class="chat-widget-mini">
+      <div><strong>Coach IA:</strong> Prioriza resistencia y tecnica este jueves.</div>
+      <div><strong>Entrenador:</strong> Generar rutina personalizada para Sub-15.</div>
     </div>
   </div>
 </section>

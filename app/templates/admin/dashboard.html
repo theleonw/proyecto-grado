@@ -58,6 +58,35 @@
       </div>
     </div>
   </div>
+  <div class="row g-4 mt-1">
+    <div class="col-lg-6">
+      <div class="glass-card p-4">
+        <h3 class="h5 fw-bold">Activar pago manual</h3>
+        <form method="post" action="{{ url_for('admin.activar_pago_usuario') }}" class="row g-2">
+          <div class="col-8">
+            <select class="form-select" name="user_id" required>
+              <option value="">Selecciona usuario</option>
+              {% for u in usuarios %}
+              <option value="{{ u.id }}">{{ u.email }} ({{ u.status }})</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="col-4"><input class="form-control" type="number" name="monto" value="85000"></div>
+          <div class="col-12"><button class="btn btn-success">Activar pago y acceso</button></div>
+        </form>
+      </div>
+    </div>
+    <div class="col-lg-6">
+      <div class="glass-card p-4">
+        <h3 class="h5 fw-bold">Chat directivo (beta)</h3>
+        <p class="text-secondary">Canal activo para soporte de administracion y decisiones operativas.</p>
+        <div class="chat-widget-mini">
+          <div><strong>Directivo:</strong> KPIs actualizados y pagos habilitados desde admin.</div>
+          <div><strong>Sistema:</strong> Chatbot en panel admin ACTIVO.</div>
+        </div>
+      </div>
+    </div>
+  </div>
 </section>
 {% endblock %}
 

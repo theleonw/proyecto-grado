@@ -40,12 +40,19 @@ def entrenadores_dashboard():
         .filter(Evaluacion.fecha == date.today())
         .count()
     )
+    asistieron_hoy = (
+        db.session.query(Asistencia)
+        .filter(Asistencia.fecha == date.today(), Asistencia.asistio.is_(True))
+        .count()
+    )
 
     return render_template(
         "entrenador/dashboard.html",
         ranking=ranking_view,
         tendencia_equipo=[68, 70, 72, 75, 79, 81],
         evaluaciones_hoy=evaluaciones_hoy,
+        asistieron_hoy=asistieron_hoy,
+        estudiantes_hoy=ranking_view[:5],
         total_estudiantes=len(estudiantes),
     )
 
